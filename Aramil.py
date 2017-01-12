@@ -28,6 +28,8 @@ async def on_ready():
 #---------------
 @client.event
 async def on_message(message):
+        #if message.content.startswith('!roll'):
+                
 	if message.content.startswith('!test'):
 		counter = 0
 		tmp = await client.send_message(message.channel, 'Calculating messages...')
@@ -35,14 +37,6 @@ async def on_message(message):
 			if log.author == message.author:
 				counter += 1
 		await client.edit_message(tmp, 'You have {} messages.'.format(counter))
-
-	elif message.content.startswith('!sleep'):
-		await asyncio.sleep(5)
-		await client.send_message(message.channel, 'Done sleeping')
-		
-	elif message.content.startswith('!roll d6'):
-		rollRes = str(random.randint(1,6))
-		await client.send_message(message.channel, 'You rolled a ' + rollRes + '.')
 		
 # Begin Execution
 #-----------------
