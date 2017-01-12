@@ -28,7 +28,13 @@ async def on_ready():
 #---------------
 @client.event
 async def on_message(message):
-        #if message.content.startswith('!roll'):
+        if message.content.startswith('!roll'):
+		msg=message.content
+		rollType = msg.split()[1]
+		numDice = int(rollType.split('d')[0])
+		maxVal = int(rollType.split('d')[1])
+		rollRes = rollDice(numDice, maxVal)
+		await client.send_message(message.channel, str(rollType) + ' = ' + str('rollRes'))
                 
 	if message.content.startswith('!test'):
 		counter = 0
