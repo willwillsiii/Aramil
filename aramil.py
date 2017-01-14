@@ -34,7 +34,7 @@ async def on_message(message):
 		numDice = int(rollType.split('d')[0])
 		maxVal = int(rollType.split('d')[1])
 		rollRes = rollDice(numDice, maxVal)
-		await client.send_message(message.channel, str(rollType) + ' = ' + str('rollRes'))
+		await client.send_message(message.channel, str(rollType) + ' = ' + str(rollRes))
                 
 	if message.content.startswith('!test'):
 		counter = 0
