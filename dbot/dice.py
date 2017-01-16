@@ -1,16 +1,28 @@
-import random 
+from functools import singledispatch
+import random
+import re
 
-def rollDice(maxVal, numDice):
-    rollRes=[]
+@singledispatch
+def rollDice(maxVal, numDice = 1):
+    rollRes = []
     for x in range(numDice):
         rollRes.append(random.randint(1, maxVal))
     return rollRes
 
-def chatRoll():
-        if message.content.startswith('!roll'):
-		    msg=message.content
-		    rollType = msg.split()[1]
-		    numDice = int(rollType.split('d')[0])
-		    maxVal = int(rollType.split('d')[1])
-		    rollRes = rollDice(numDice, maxVal)
-		    await client.send_message(message.channel, str(rollType) + ' = ' + str(rollRes))
+@rollDice.register(str)
+def _(rollStr):
+    rollList = re.split(r'([\s\+\-\*\/])', rollStr) #parse
+    rollList = list(filter(None, rollList)) #remove empty strings
+    for i in range(len(rollList)): #check each element for roll
+        if 'd' in rollList[i]:
+            numDice = rollList[i].split('d')[0]
+            maxVal = rollList[i].split('d')[1]
+            if numDice == '': numDice = '1'
+            if maxVal == '': maxVal = '6'
+            rollList[i] = str(sum(rollDice(int(maxVal),int(numDice))))
+        return eval(''.join(rollList))
+
+def chatRoll(msg):
+    msg = msg.split()[1]
+    rollRes = rollDice(msg)
+    return msg + ' = ' + str(rollRes)
