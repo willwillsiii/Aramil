@@ -23,6 +23,6 @@ def _(rollStr):
         return eval(''.join(rollList))
 
 def chatRoll(msg):
-    msg = msg.split()[1]
+    msg = msg.split(' ', 1)[1]
     rollRes = rollDice(msg)
     return msg + ' = ' + str(rollRes)
