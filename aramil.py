@@ -19,30 +19,61 @@ client = discord.Client()
 
 @client.event
 async def on_ready():
-        print('Logged in as')
-        print(client.user.name)
-        print(client.user.id)
-        print('------')
+    print('Logged in as')
+    print(client.user.name)
+    print(client.user.id)
+    print('------')
         
 # Chat Commands
 #---------------
 @client.event
 async def on_message(message):
-        if message.content.startswith('!roll'):
-                rollMsg = chatRoll(message.content)
-                await client.send_message(message.channel, rollMsg)
+    if message.content.startswith('!roll'):
+        try:
+            rollMsg = chatRoll(message.content)
+        except ValueError as errMsg:
+            errMsg = str(errMsg)
+            
+            if 'positive integer number of faces' in errMsg or 'invalid literal maxVal' in errMsg: #maxVal is not a positive int
+                sides = errMsg.split('-', 1)[0] #split string to get sides, etc. 0.5-sided returns 0.5
+                if 'invalid literal' in errMsg: sides = errMsg.split("'")[1] # '0.5' returns 0.5
+                rollMsg = ("Show me a " + sides + "-sided die and I will roll it for you.")
+            
+            if 'positive integer number of dice' in errMsg or 'invalid literal numDice' in errMsg: #numDice is not a positive int
+                numDice = errMsg.split(' ', 1)[0]
+                if 'invalid literal' in errMsg: numDice = errMsg.split("'")[1] # '0.5' returns 0.5
+                if '-' in numDice:
+                    rollMsg = ("Can you roll a negative number of dice? Really, you must teach me.")
+                else:
+                    rollMsg = ("Sorry, I am no wizard; therefore, I cannot roll " + numDice + " dice.")
+            
+            if 'Maximum sides is 200' in errMsg:
+                sides = errMsg.split('-', 1)[0]
+                rollMsg = ("I don't have a " + sides + "-sided die. " + 
+                           "My collection only has a maximum of 200-sided dice.")
+            
+            if '100 dice at once' in errMsg:
+                numDice = errMsg.split(' ', 1)[0]
+                rollMsg = ("Using " + numDice + " dice is illogical. " +
+                           "If you think you can roll more than 100 at once, do it yourself.")
+                    
+        if rollMsg is not '':       
+            await client.send_message(message.channel, rollMsg)
+        else:
+            await client.send_message(message.channel, "Sorry, I didn't understand you.")
                 
-        if message.content.startswith('!test'):
-                counter = 0
-                tmp = await client.send_message(message.channel, 'Calculating messages...')
-                async for log in client.logs_from(message.channel, limit=100):
-                        if log.author == message.author:
-                                counter += 1
+                
+    if message.content.startswith('!test'):
+        counter = 0
+        tmp = await client.send_message(message.channel, 'Calculating messages...')
+        async for log in client.logs_from(message.channel, limit=100):
+            if log.author == message.author:
+                counter += 1
                 await client.edit_message(tmp, 'You have {} messages.'.format(counter))
                 
 # Begin Execution
 #-----------------
 # read token from text file
 with open('token.txt', 'r') as tokenFile:
-        token = tokenFile.read().replace('\n', '') # remove new-line chars
+    token = tokenFile.read().replace('\n', '') # remove new-line chars
 client.run(token)
