@@ -22,7 +22,7 @@ def rollDice(maxVal, numDice = 1):
 
 @rollDice.register(str)
 def _(rollStr):
-    rollList = re.split(r'([\s\+\-\*\/])', rollStr) #parse
+    rollList = re.split(r'([\s\+\-\*\/\(\)])', rollStr) #parse
     rollList = list(filter(None, rollList)) #remove empty strings
     for i in range(len(rollList)): #check each element for roll
         if 'd' in rollList[i]:
@@ -31,11 +31,9 @@ def _(rollStr):
             if numDice == '': numDice = '1'
             if maxVal == '': maxVal = '6'
             if '.' in numDice:
-                raise ValueError("invalid literal numDice=" + numDice +
-                                 " for int() with base 10: '" + numDice + "'")
+                raise ValueError("invalid literal numDice=" + numDice + " for int() with base 10: '" + numDice + "'")
             if '.' in maxVal:
-                raise ValueError("invalid literal maxVal=" + maxVal +
-                                 " for int() with base 10: '" + maxVal + "'")
+                raise ValueError("invalid literal maxVal=" + maxVal + " for int() with base 10: '" + maxVal + "'")
             rollList[i] = str(sum(rollDice(int(maxVal),int(numDice))))
     return eval(''.join(rollList))
 
