@@ -58,9 +58,16 @@ async def on_message(message):
                            "If you think you can roll more than 100 at once, do it yourself.")
             else:
                 rollMsg = "Sorry, I didn't understand you."
+                await client.send_message(message.channel, rollMsg)
                 raise ValErr
-            
+                
+        except:
+            rollMsg = "Sorry, I didn't understand you."
+            await client.send_message(message.channel, rollMsg)
+            raise
+
         await client.send_message(message.channel, rollMsg)
+
 # Begin Execution
 #-----------------
 # read token from text file
