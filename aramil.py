@@ -57,10 +57,10 @@ async def on_message(message):
                 rollMsg = ("Using " + numDice + " dice is illogical. " +
                            "If you think you can roll more than 100 at once, do it yourself.")
             else:
-                raise ValErr
                 rollMsg = "Sorry, I didn't understand you."
+                raise ValErr
             
-            await client.send_message(message.channel, rollMsg)
+        await client.send_message(message.channel, rollMsg)
 # Begin Execution
 #-----------------
 # read token from text file
