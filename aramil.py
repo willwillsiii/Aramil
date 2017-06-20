@@ -37,24 +37,24 @@ async def on_message(message):
             if 'positive integer number of faces' in errMsg or 'invalid literal maxVal' in errMsg: #maxVal is not a positive int
                 sides = errMsg.split('-', 1)[0] #split string to get sides, etc. 0.5-sided returns 0.5
                 if 'invalid literal' in errMsg: sides = errMsg.split("'")[1] # '0.5' returns 0.5
-                rollMsg = ("Show me a " + sides + "-sided die and I will roll it for you.")
+                rollMsg = "Show me a " + sides + "-sided die and I will roll it for you."
             
             elif 'positive integer number of dice' in errMsg or 'invalid literal numDice' in errMsg: #numDice is not a positive int
                 numDice = errMsg.split(' ', 1)[0]
                 if 'invalid literal' in errMsg: numDice = errMsg.split("'")[1] # '0.5' returns 0.5
                 if '-' in numDice:
-                    rollMsg = ("Can you roll a negative number of dice? Really, you must teach me.")
+                    rollMsg = "Can you roll a negative number of dice? Really, you must teach me."
                 else:
-                    rollMsg = ("Sorry, I am no wizard; therefore, I cannot roll " + numDice + " dice.")
+                    rollMsg = "Sorry, I am no wizard; therefore, I cannot roll " + numDice + " dice."
             
             elif 'Maximum sides is 200' in errMsg:
                 sides = errMsg.split('-', 1)[0]
-                rollMsg = ("I don't have a " + sides + "-sided die. " + 
+                rollMsg = ("I don't have a " + sides + "-sided die. "
                            "My collection only has a maximum of 200-sided dice.")
             
             elif '100 dice at once' in errMsg:
                 numDice = errMsg.split(' ', 1)[0]
-                rollMsg = ("Using " + numDice + " dice is illogical. " +
+                rollMsg = ("Using " + numDice + " dice is illogical. "
                            "If you think you can roll more than 100 at once, do it yourself.")
             else:
                 rollMsg = "Sorry, I didn't understand you."
