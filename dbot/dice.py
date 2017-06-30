@@ -1,5 +1,6 @@
 from functools import singledispatch
 import random
+import collections
 import re
 
 @singledispatch
@@ -32,21 +33,27 @@ def parseRoll(rollStr):
     rollList = list(filter(None, rollList))
     return rollList
 
-@rollDice.register(str)
-def _(rollStr):
-    numDice = rollStr.split('d')[0]
-    maxVal = rollStr.split('d')[1]
+def modRoll(rollStr):
+    if rollStr == '': rollStr = 'd'
+    numDice, maxVal = tuple(rollStr.split('d'))
     # set defaults for numDice and maxVal
     if numDice == '': numDice = '1'
-    if maxVal == '': maxVal = '6'
+    if maxVal == '': maxVal = '20'
+    roll = numDice + 'd' + maxVal
+    Dice = collections.namedtuple('Dice', ['roll', 'numDice', 'maxVal'])
+    return Dice(roll, numDice, maxVal)
+
+@rollDice.register(str)
+def _(rollStr):
+    d = modRoll(rollStr)
     # check for decimals
-    if '.' in numDice:
-        raise ValueError("invalid literal numDice=" + numDice +
-                         " for int() with base 10: '" + numDice + "'")
-    if '.' in maxVal:
-        raise ValueError("invalid literal maxVal=" + maxVal +
-                         " for int() with base 10: '" + maxVal + "'")
-    return rollDice(int(maxVal),int(numDice))
+    if '.' in d.numDice:
+        raise ValueError("invalid literal for int() with base 10: 'numDice="
+                         + d.numDice + "'")
+    if '.' in d.maxVal:
+        raise ValueError("invalid literal for int() with base 10: 'maxVal="
+                         + d.maxVal + "'")
+    return rollDice(int(d.maxVal),int(d.numDice))
 
 def rollMath(rollStr):
     rollList = parseRoll(rollStr)
@@ -57,28 +64,40 @@ def rollMath(rollStr):
     return eval(''.join(rollList))
 
 def chatRoll(msg, verbose=False, formatted=False):
-    msg = msg.split(' ', 1)[1]
-    returnMsg = msg
-    if verbose:
-        returnMsg += " = "
-        rollList = parseRoll(msg)
-        returnExp = rollList.copy()
-        for i in range(len(rollList)):
-            if 'd' in rollList[i]:
-                rollRes = rollDice(rollList[i])
-                rollSum = sum(rollRes)
+    try:
+        msg = msg.strip().split(' ', 1)[1]
+    except:
+        msg = 'd'
+    returnMsg = ''
+    modMsg = ''
+    rollList = parseRoll(msg)
+    if rollList == []: rollList = ['d']
+    for i in range(len(rollList)):
+        if 'd' in rollList[i]:
+            d = modRoll(rollList[i])
+            modMsg += d.roll
+            rollRes = rollDice(rollList[i])
+            rollSum = sum(rollRes)
+            if verbose:
                 if formatted:
-                    rollList[i] = ("**" + str(rollRes) + 
-                                   "***(" + str(rollSum) + ")*")
+                    if d.numDice == '1':
+                        returnMsg += "**" + str(rollRes) + "**"
+                    else:
+                        returnMsg += ("**" + str(rollRes) + 
+                                  "**{" + str(rollSum) + "}")
                 else:
-                    rollList[i] = str(rollRes) + "(" + str(rollSum) + ")"
-                returnExp[i] = str(rollSum)
-            else:
-                returnExp[i] = rollList[i]
-            returnMsg += rollList[i]
-        rollRes = eval(''.join(returnExp))
+                    returnMsg += str(rollRes) + "{" + str(rollSum) + "}"
+            rollList[i] = str(rollSum)
+        else:
+            modMsg += rollList[i]
+            if verbose:
+                returnMsg += rollList[i]
+    returnMsg = modMsg + ' = ' + returnMsg
+    if verbose:
+        returnMsg += ' = '
+    if formatted:
+        returnMsg += "**" + str(eval(''.join(rollList))) + "**"
     else:
-        rollRes = rollMath(msg)
-    returnMsg += " = " + str(rollRes)
+        returnMsg += str(eval(''.join(rollList)))
     return returnMsg
 
