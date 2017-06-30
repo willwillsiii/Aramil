@@ -32,9 +32,9 @@ async def on_message(message):
         try:
             # check for verbose rolling
             if message.content[5] == 'v':
-                rollMsg = chatRoll(message.content)
-            else:
                 rollMsg = chatRoll(message.content, True, True)
+            else:
+                rollMsg = chatRoll(message.content)
         except ValueError as ValErr:
             errMsg = str(ValErr)
             
