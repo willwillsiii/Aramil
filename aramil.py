@@ -30,7 +30,11 @@ async def on_ready():
 async def on_message(message):
     if message.content.startswith('!roll'):
         try:
-            rollMsg = chatRoll(message.content)
+            # check for verbose rolling
+            if message.content[5] == 'v':
+                rollMsg = chatRoll(message.content)
+            else:
+                rollMsg = chatRoll(message.content, True, True)
         except ValueError as ValErr:
             errMsg = str(ValErr)
             
