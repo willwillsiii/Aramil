@@ -109,7 +109,8 @@ def chat_roll(roll_str='', verbose=False, formatted=False):
                             else:
                                 if bold_on:
                                     if first_num:
-                                        verbose_str += "**" + str(roll_res[n]) first_num = False
+                                        verbose_str += "**" + str(roll_res[n])
+                                        first_num = False
                                         bold_on = False
                                     else:
                                         verbose_str += (
