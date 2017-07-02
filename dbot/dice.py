@@ -42,14 +42,14 @@ def mod_roll(roll_str):
         keep_str = 'h' + keep_str
     elif 'l' in rest:
         max_val, keep_str = tuple(rest.split('l'))
-        keep_str = 'l' + keep_str
+        keep_str = 'L' + keep_str
     else:
         max_val = rest
     # set defaults
     if num_dice == '': num_dice = '1'
     if max_val == '': max_val = '20'
     if keep_str == 'h': keep_str = 'h1'
-    if keep_str == 'l': keep_str = 'l1'
+    if keep_str == 'L': keep_str = 'L1'
     # check for decimals
     if '.' in num_dice:
         raise ValueError("invalid literal for int() with base 10: 'num_dice="
@@ -70,6 +70,7 @@ def chat_roll(roll_str='', verbose=False, formatted=False):
     return_msg = ''
     mod_msg = ''
     # parse
+    roll_str = roll_str.lower()
     roll_list = re.split(r'([\s\+\-\*\/\(\)])', roll_str)
     # remove empty strings
     roll_list = list(filter(None, roll_list))
@@ -144,6 +145,7 @@ def chat_roll(roll_str='', verbose=False, formatted=False):
 
 
 def sort_and_trim(vals, keep):
+    keep = keep.lower()
     trim_ndcs = sorted(range(len(vals)), key=vals.__getitem__)
     num_keep = int(keep[1:].replace('!', '-'))
     if num_keep < 0:
