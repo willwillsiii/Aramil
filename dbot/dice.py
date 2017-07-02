@@ -145,17 +145,17 @@ def chat_roll(roll_str='', verbose=False, formatted=False):
 
 def sort_and_trim(vals, keep):
     trim_ndcs = sorted(range(len(vals)), key=vals.__getitem__)
-    num_keep = int(keep[1:])
+    num_keep = int(keep[1:].replace('!', '-'))
     if num_keep < 0:
-        if keep.startwith('h'):
-            keep[0] = 'l'
+        if keep.startswith('h'):
+            keep = keep.replace('h', 'l')
         elif keep.startswith('l'):
-            keep[0] = 'h'
-        num_keep = len(vals) - num_keep
+            keep = keep.replace('l', 'h')
+        num_keep = len(vals) + num_keep
     if keep.startswith('h'):
         trim_ndcs = trim_ndcs[-num_keep:]
     elif keep.startswith('l'):
-        trim_ndcs = trim_ndcs[:num_keep+1]
+        trim_ndcs = trim_ndcs[:num_keep]
     vals = [vals[i] for i in trim_ndcs]
     return vals, trim_ndcs
 
