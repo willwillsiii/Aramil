@@ -4,17 +4,21 @@ import logging
 import random
 
 # homebrew package imports
-from dbot.dice import chatRoll
+from dbot.dice import chat_roll
 
-# log setup
+# Logging Setup
+#---------------
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+handler = logging.FileHandler(filename='discord.log',
+                              encoding='utf-8',
+                              mode='w')
+handler.setFormatter(logging.Formatter(
+    '%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
-# Initialization
-#----------------
+# Client Initialization
+#-----------------------
 client = discord.Client()
 
 @client.event
@@ -23,70 +27,69 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
-        
+
 # Chat Commands
 #---------------
 @client.event
 async def on_message(message):
+
     if message.content.startswith('!roll'):
         try:
             # check for verbose rolling
-            if len(message.content) >= 6 and message.content[5] == 'v':
-                rollMsg = chatRoll(message.content, True, True)
+            if message.content[5:].startswith('v'):
+                roll_msg = chat_roll(message.content[6:], True, True)
             else:
-                rollMsg = chatRoll(message.content)
-        except ValueError as ValErr:
-            errMsg = str(ValErr)
-            # maxVal is not a positive int
-            if 'positive integer number of faces' in errMsg or (
-                'invalid literal maxVal') in errMsg:
-                sides = errMsg.split('-', 1)[0]
-                #split string to get sides, etc. 0.5-sided returns 0.5
-                if 'invalid literal' in errMsg:
-                    sides = errMsg.split("'")[1]
-                # '0.5' returns 0.5
-                rollMsg = ("Show me a " + sides +
-                           "-sided die and I will roll it for you.")
+                roll_msg = chat_roll(message.content[5:])
+        except ValueError as val_err:
+            err_msg = str(val_err)
 
-            #numDice is not a positive int
-            elif 'positive integer number of dice' in errMsg or (
-                'invalid literal numDice') in errMsg:
-                numDice = errMsg.split(' ', 1)[0]
+            # max_val is not a positive int
+            if 'positive integer number of faces' in err_msg or (
+                    'invalid literal max_val') in err_msg:
+                sides = err_msg.split('-', 1)[0]
+                # split string to get sides, etc. 0.5-sided returns 0.5
+                if 'invalid literal' in err_msg:
+                    sides = err_msg.split("'")[1]
                 # '0.5' returns 0.5
-                if 'invalid literal' in errMsg:
-                           numDice = errMsg.split("'")[1]
-                if '-' in numDice:
-                    rollMsg = ("Can you roll a negative number of dice?" +
+                roll_msg = ("Show me a " + sides +
+                           "-sided die and I will roll it for you.")
+            # num_dice is not a positive int
+            elif 'positive integer number of dice' in err_msg or (
+                    'invalid literal num_dice') in err_msg:
+                num_dice = err_msg.split(' ', 1)[0]
+                # '0.5' returns 0.5
+                if 'invalid literal' in err_msg:
+                           num_dice = err_msg.split("'")[1]
+                if '-' in num_dice:
+                    roll_msg = ("Can you roll a negative number of dice?" +
                                " Really, you must teach me.")
                 else:
-                    rollMsg = ("Sorry, I am no wizard; " + 
-                               "therefore, I cannot roll " + numDice +
+                    roll_msg = ("Sorry, I am no wizard; " + 
+                               "therefore, I cannot roll " + num_dice +
                                " dice.")
-            
-            elif 'Maximum sides is 200' in errMsg:
-                sides = errMsg.split('-', 1)[0]
-                rollMsg = ("I don't have a " + sides + "-sided die. "
+            elif 'Maximum sides is 200' in err_msg:
+                sides = err_msg.split('-', 1)[0]
+                roll_msg = ("I don't have a " + sides + "-sided die. "
                            "My collection only has a maximum of " +
                            "200-sided dice.")
-            
-            elif '100 dice at once' in errMsg:
-                numDice = errMsg.split(' ', 1)[0]
-                rollMsg = ("Using " + numDice + " dice is illogical. "
-                           "If you think you can roll more than 100 at " + 
+            elif '100 dice at once' in err_msg:
+                num_dice = err_msg.split(' ', 1)[0]
+                roll_msg = ("Using " + num_dice + " dice is illogical. "
+                           "If you think you can roll more than 100 at " +
                            "once, do it yourself.")
             else:
-                rollMsg = "Sorry, I didn't understand you."
-                raise ValErr
-                
+                roll_msg = "Sorry, I didn't understand you."
+                raise val_err
+
         except:
-            rollMsg = "Sorry, I didn't understand you."
+            roll_msg = "Sorry, I didn't understand you."
             raise
         finally:
-            await client.send_message(message.channel, rollMsg)
+            await client.send_message(message.channel, roll_msg)
 
 # Begin Execution
 #-----------------
 # read token from text file
-with open('token.txt', 'r') as tokenFile:
-    token = tokenFile.read().replace('\n', '') # remove new-line chars
+with open('token.txt', 'r') as token_file:
+    token = token_file.read().replace('\n', '')
 client.run(token)
