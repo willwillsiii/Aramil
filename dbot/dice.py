@@ -48,8 +48,9 @@ def mod_roll(roll_str):
     # set defaults
     if num_dice == '': num_dice = '1'
     if max_val == '': max_val = '20'
-    if keep_str == 'h': keep_str = 'h1'
-    if keep_str == 'L': keep_str = 'L1'
+    if keep_str.endswith('h') or keep_str.endswith('L') or (
+            keep_str.endswith('!')):
+        keep_str = keep_str + '1'
     # check for decimals
     if '.' in num_dice:
         raise ValueError("invalid literal for int() with base 10: 'num_dice="
