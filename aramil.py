@@ -85,7 +85,11 @@ async def on_message(message):
             roll_msg = "Sorry, I didn't understand you."
             raise
         finally:
-            roll_msg = ''.join([message.author.mention, ": ", roll_msg])
+            # prepend mention
+            if '\n' in roll_msg:
+                roll_msg = ''.join([message.author.mention, "\n: ", roll_msg])
+            else:
+                roll_msg = ''.join([message.author.mention, ": ", roll_msg])
             await client.send_message(message.channel, roll_msg)
 
 # Begin Execution
