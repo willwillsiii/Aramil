@@ -85,6 +85,7 @@ async def on_message(message):
             roll_msg = "Sorry, I didn't understand you."
             raise
         finally:
+            roll_msg = ''.join([message.author.id, ": ", roll_msg])
             await client.send_message(message.channel, roll_msg)
 
 # Begin Execution
