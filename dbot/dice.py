@@ -5,34 +5,40 @@ import re
 
 @singledispatch
 def roll_dice(max_val=20, num_dice=1):
+    """Returns a list of random dice rolls.
+
+    Keyword arguments:
+    max_val -- maximum value of the dice, also the number of sides (default 20)
+    num_dice -- number of dice to roll (default 1)
+    """
     # check inputs
     if max_val <= 0 or not isinstance(max_val, int):
-        raise ValueError(str(max_val) +
-                         '-sided die does not have a positive integer'
-                         ' number of faces.')
+        raise ValueError("".join([str(max_val),
+                         '-sided die does not have a positive integer',
+                         ' number of faces.']))
     if num_dice <= 0 or not isinstance(num_dice, int):
-        raise ValueError(str(num_dice) + ' dice is not a positive integer'
-                         ' number of dice.')
-
+        raise ValueError("".join([str(num_dice),
+                         ' dice is not a positive integer',
+                         ' number of dice.']))
     if max_val > 200:
-        raise ValueError(str(max_val) + '-sided die is too large.'
-                         ' Maximum sides is 200.')
+        raise ValueError("".join([str(max_val),
+                         '-sided die is too large.',
+                         ' Maximum sides is 200.']))
     if num_dice > 100:
-        raise ValueError(str(num_dice) + ' dice is too many. Only roll'
-                         ' up to 100 dice at once.')
-    roll_res = [0] * num_dice
-    for i in range(num_dice):
-        roll_res[i] = random.randint(1, max_val)
-    return roll_res
+        raise ValueError("".join([str(num_dice),
+                         ' dice is too many. Only roll',
+                         ' up to 100 dice at once.']))
+    return [random.randint(1, max_val) for die in range(num_dice)]
 
 
 @roll_dice.register(str)
 def _(roll_str):
-    d = mod_roll(roll_str)
-    return roll_dice(int(d.max_val),int(d.num_dice))
+    roll = mod_roll(roll_str)
+    return roll_dice(int(roll.max_val),int(roll.num_dice))
 
 
 def mod_roll(roll_str):
+    """Modify a roll to normalize and expand abbreviations"""
     roll_str = roll_str.lower()
     if roll_str == '': roll_str = 'd'
     num_dice, rest = tuple(roll_str.split('d'))
@@ -53,25 +59,37 @@ def mod_roll(roll_str):
         keep_str = keep_str + '1'
     # check for decimals
     if '.' in num_dice:
-        raise ValueError("invalid literal for int() with base 10: 'num_dice="
-                         + d.num_dice + "'")
+        raise ValueError(''.join([
+            "invalid literal for int() with base 10: 'num_dice=",
+            num_dice, "'"]))
     if '.' in max_val:
-        raise ValueError("invalid literal for int() with base 10: 'max_val="
-                         + d.max_val + "'")
+        raise ValueError(''.join([
+            "invalid literal for int() with base 10: 'max_val=",
+            max_val, "'"]))
     if '.' in keep_str:
-        raise ValueError("invalid literal for int() with base 10: 'keep_str="
-                         + d.keep_str + "'")
-    roll = num_dice + 'd' + max_val + keep_str
-    Dice = collections.namedtuple('Dice', ['roll_str', 'num_dice',
+        raise ValueError(''.join([
+            "invalid literal for int() with base 10: 'keep_str=",
+            keep_str, "'"]))
+    mod_roll_str = num_dice + 'd' + max_val + keep_str
+    Roll = collections.namedtuple('Roll', ['roll_str', 'num_dice',
                                            'max_val', 'keep_str'])
-    return Dice(roll, num_dice, max_val, keep_str)
+    return Roll(mod_roll_str, num_dice, max_val, keep_str)
 
-def chat_roll_wrap(chat_str, verbose=False, formatted=False):
+def chat_roll_wrap(roll_str, verbose=False, formatted=False):
     """Parse input by commas, call chat_roll on each token."""
-    chat_str = chat_str.split(',')
-
+    chat_list = roll_str.split(',')
+    rolls = [chat_roll(roll_str, verbose, formatted)
+             for roll_str in chat_list]
+    return "".join(rolls)
 
 def chat_roll(roll_str='', verbose=False, formatted=False):
+    """Interpet and compute rolls from a string.
+    
+    Keyword arguments:
+    roll_str -- what to interpret as a roll (default '')
+    verbose -- whether each roll is returned (default False)
+    formatted -- whether to format for Discord (default false)
+    """
     return_msg = ''
     mod_msg = ''
     roll_str = roll_str.lower()
@@ -80,12 +98,12 @@ def chat_roll(roll_str='', verbose=False, formatted=False):
     if roll_list == []: roll_list = ['d']
     for i in range(len(roll_list)):
         if 'd' in roll_list[i]:
-            d = mod_roll(roll_list[i])
-            mod_msg += d.roll_str
-            roll_res = roll_dice(int(d.max_val), int(d.num_dice))
-            if d.keep_str:
+            roll = mod_roll(roll_list[i])
+            mod_msg += roll.roll_str
+            roll_res = roll_dice(int(roll.max_val), int(roll.num_dice))
+            if roll.keep_str:
                 roll_res_trimmed, trim_ndcs = sort_and_trim(roll_res,
-                                                            d.keep_str)
+                                                            roll.keep_str)
                 roll_sum = sum(roll_res_trimmed)
             else:
                 roll_sum = sum(roll_res)
@@ -93,7 +111,7 @@ def chat_roll(roll_str='', verbose=False, formatted=False):
                 verbose_str = str(roll_res)
                 if formatted:
                     verbose_str = "**" + verbose_str + "**"
-                    if d.keep_str:
+                    if roll.keep_str:
                         verbose_str = "**["
                         first_num = True
                         bold_on = True
@@ -125,7 +143,7 @@ def chat_roll(roll_str='', verbose=False, formatted=False):
                             verbose_str += "]**"
                         else:
                             verbose_str += "**]**"
-                    if d.num_dice == '1' or d.keep_str[1:] == '1':
+                    if roll.num_dice == '1' or roll.keep_str[1:] == '1':
                         return_msg += verbose_str
                     else:
                         return_msg += (verbose_str
@@ -148,6 +166,12 @@ def chat_roll(roll_str='', verbose=False, formatted=False):
 
 
 def sort_and_trim(vals, keep):
+    """Returns a sorted subset of values and the indices of the subset.
+    
+    Arguments:
+    vals -- values to sort
+    keep -- which values to keep
+    """
     keep = keep.lower()
     trim_ndcs = sorted(range(len(vals)), key=vals.__getitem__)
     num_keep = int(keep[1:].replace('!', '-'))
@@ -163,4 +187,5 @@ def sort_and_trim(vals, keep):
         trim_ndcs = trim_ndcs[:num_keep]
     vals = [vals[i] for i in trim_ndcs]
     return vals, trim_ndcs
+
 
