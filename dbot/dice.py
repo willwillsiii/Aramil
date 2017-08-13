@@ -66,14 +66,16 @@ def mod_roll(roll_str):
                                            'max_val', 'keep_str'])
     return Dice(roll, num_dice, max_val, keep_str)
 
+def chat_roll_wrap(chat_str, verbose=False, formatted=False):
+    """Parse input by commas, call chat_roll on each token."""
+    chat_str = chat_str.split(',')
+
 
 def chat_roll(roll_str='', verbose=False, formatted=False):
     return_msg = ''
     mod_msg = ''
-    # parse
     roll_str = roll_str.lower()
     roll_list = re.split(r'([\s\+\-\*\/\(\)])', roll_str)
-    # remove empty strings
     roll_list = list(filter(None, roll_list))
     if roll_list == []: roll_list = ['d']
     for i in range(len(roll_list)):
