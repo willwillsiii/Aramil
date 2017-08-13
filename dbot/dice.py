@@ -80,7 +80,7 @@ def chat_roll_wrap(roll_str, verbose=False, formatted=False):
     chat_list = roll_str.split(',')
     rolls = [chat_roll(roll_str, verbose, formatted)
              for roll_str in chat_list]
-    return "".join(rolls)
+    return "\n".join(rolls)
 
 def chat_roll(roll_str='', verbose=False, formatted=False):
     """Interpet and compute rolls from a string.
