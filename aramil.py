@@ -4,7 +4,7 @@ import logging
 import random
 
 # homebrew package imports
-from dbot.dice import chat_roll
+from dbot.dice import chat_roll_wrap
 
 # Logging Setup
 #---------------
@@ -37,9 +37,9 @@ async def on_message(message):
         try:
             # check for verbose rolling
             if message.content[5:].startswith('v'):
-                roll_msg = chat_roll(message.content[6:], True, True)
+                roll_msg = chat_roll_wrap(message.content[6:], True, True)
             else:
-                roll_msg = chat_roll(message.content[5:])
+                roll_msg = chat_roll_wrap(message.content[5:])
         except ValueError as val_err:
             err_msg = str(val_err)
 
