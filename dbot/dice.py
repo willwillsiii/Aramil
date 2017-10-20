@@ -77,6 +77,11 @@ def mod_roll(roll_str):
 
 def chat_roll(roll_str, verbose=False, formatted=False):
     """Parse input by commas, call chat_roll_single on each token."""
+
+    hashtag_index = roll_str.find('#')
+    if not hashtag_index == -1:
+        roll_str, comment = tuple(roll_str.split('#'))
+
     while '{' in roll_str:
         end_brace_index = roll_str.find('}')
         if end_brace_index == -1:
@@ -92,7 +97,7 @@ def chat_roll(roll_str, verbose=False, formatted=False):
     chat_list = roll_str.split(',')
     rolls = [chat_roll_single(roll_str, verbose, formatted)
              for roll_str in chat_list]
-    return '\n'.join(rolls)
+    return comment + "\n" + "\n".join(rolls)
 
 def chat_roll_single(roll_str='', verbose=False, formatted=False):
     """Interpet and compute rolls from a string.
