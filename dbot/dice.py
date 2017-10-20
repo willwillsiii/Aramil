@@ -76,7 +76,33 @@ def mod_roll(roll_str):
     return Roll(mod_roll_str, num_dice, max_val, keep_str)
 
 def chat_roll(roll_str, verbose=False, formatted=False):
-    """Parse input by commas, call chat_roll_single on each token."""
+    """General purpose wrapper function for chat_roll_single."""
+    # parse for macros
+
+    # define a dictionary of macros as such:
+    # {'macro': 'equivalent roll'}
+    # Macros:
+    # stat -> 4d6L!1
+    # stats -> {4d6L!1, 6}
+    # advantage -> 2d20h1
+    # ad -> 2d20h1
+    # disadvantage -> 2d20L1
+    # dis -> 2d20L1
+    macros = {
+        'stat' : '4d6L!', 
+        'stats' : '{4d6L!1, 6}',
+        'advantage' : '2d20h1',
+        'ad' : '2d20h1',
+        'disadvantage' : '2d20L1',
+        'dis' : '2d20L1'
+    }
+    
+    
+    # usmacros:
+        for key, value in macros.iteritems():
+            roll_str = roll_str.replace(key,value)
+
+    # parse for repeated rolls
     while '{' in roll_str:
         end_brace_index = roll_str.find('}')
         if end_brace_index == -1:
@@ -89,6 +115,7 @@ def chat_roll(roll_str, verbose=False, formatted=False):
         roll_str = roll_str.replace(
             roll_str[brace_index:end_brace_index+1],
             ', '.join(repeated_list))
+    # parse input by commas, call chat_roll_single on each token
     chat_list = roll_str.split(',')
     rolls = [chat_roll_single(roll_str, verbose, formatted)
              for roll_str in chat_list]
