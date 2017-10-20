@@ -75,14 +75,24 @@ def mod_roll(roll_str):
                                            'max_val', 'keep_str'])
     return Roll(mod_roll_str, num_dice, max_val, keep_str)
 
-def chat_roll_wrap(roll_str, verbose=False, formatted=False):
-    """Parse input by commas, call chat_roll on each token."""
+def chat_roll(roll_str, verbose=False, formatted=False):
+    """Parse input by commas, call chat_roll_single on each token."""
+    while '{' in roll_str:
+        brace_index = roll_Str.find('}')
+        if brace_index == -1:
+            raise ValueError('Unmatched brace.')
+        brace_str = roll_str(brace_index+1:roll_str.index('}'))
+        brace_list = brace_str.split(',')
+        repeated_list = [chat_roll_single(brace_list(0))
+                       for roll in range(int(brace_list(1)))]
+        roll_str.replace(roll_str[brace_index,roll_str.index(')')],
+                         ', '.join(repeated_list))
     chat_list = roll_str.split(',')
-    rolls = [chat_roll(roll_str, verbose, formatted)
+    rolls = [chat_roll_single(roll_str, verbose, formatted)
              for roll_str in chat_list]
-    return "\n".join(rolls)
+    return '\n'.join(rolls)
 
-def chat_roll(roll_str='', verbose=False, formatted=False):
+def chat_roll_single(roll_str='', verbose=False, formatted=False):
     """Interpet and compute rolls from a string.
     
     Keyword arguments:
