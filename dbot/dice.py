@@ -77,31 +77,22 @@ def mod_roll(roll_str):
 
 def chat_roll(roll_str, verbose=False, formatted=False):
     """General purpose wrapper function for chat_roll_single."""
+    # parse comment
+    hashtag_index = roll_str.find('#')
+    comment = ""
+    if not hashtag_index == -1:
+        roll_str, comment = tuple(roll_str.split('#'))
     # parse for macros
-
-    # define a dictionary of macros as such:
-    # {'macro': 'equivalent roll'}
-    # Macros:
-    # stat -> 4d6L!1
-    # stats -> {4d6L!1, 6}
-    # advantage -> 2d20h1
-    # ad -> 2d20h1
-    # disadvantage -> 2d20L1
-    # dis -> 2d20L1
     macros = {
-        'stat' : '4d6L!', 
-        'stats' : '{4d6L!1, 6}',
-        'advantage' : '2d20h1',
-        'ad' : '2d20h1',
-        'disadvantage' : '2d20L1',
-        'dis' : '2d20L1'
-    }
-    
-    
-    # usmacros:
-        for key, value in macros.iteritems():
-            roll_str = roll_str.replace(key,value)
-
+             'stats' : '{4d6L!1, 6}',
+             'stat' : '4d6L!', 
+             'advantage' : '2d20h1',
+             'adv' : '2d20h1',
+             'disadvantage' : '2d20L1',
+             'dis' : '2d20L1'
+             }
+    for key, value in macros.items():
+        roll_str = roll_str.lower().replace(key,value)
     # parse for repeated rolls
     while '{' in roll_str:
         end_brace_index = roll_str.find('}')
@@ -119,7 +110,7 @@ def chat_roll(roll_str, verbose=False, formatted=False):
     chat_list = roll_str.split(',')
     rolls = [chat_roll_single(roll_str, verbose, formatted)
              for roll_str in chat_list]
-    return '\n'.join(rolls)
+    return comment + "\n" + "\n".join(rolls)
 
 def chat_roll_single(roll_str='', verbose=False, formatted=False):
     """Interpet and compute rolls from a string.
