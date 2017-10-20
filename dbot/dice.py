@@ -82,7 +82,7 @@ def chat_roll(roll_str, verbose=False, formatted=False):
         if brace_index == -1:
             raise ValueError('Unmatched brace.')
         next_brace_index = roll_str.index('}')
-        brace_str = roll_str(brace_index+1:next_brace_index)
+        brace_str = roll_str[brace_index+1:next_brace_index]
         brace_list = brace_str.split(',')
         repeated_list = [chat_roll_single(brace_list(0))
                        for roll in range(int(brace_list(1)))]
