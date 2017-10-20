@@ -78,16 +78,17 @@ def mod_roll(roll_str):
 def chat_roll(roll_str, verbose=False, formatted=False):
     """Parse input by commas, call chat_roll_single on each token."""
     while '{' in roll_str:
-        brace_index = roll_Str.find('}')
-        if brace_index == -1:
+        end_brace_index = roll_str.find('}')
+        if end_brace_index == -1:
             raise ValueError('Unmatched brace.')
-        next_brace_index = roll_str.index('}')
-        brace_str = roll_str[brace_index+1:next_brace_index]
+        brace_index = roll_str.index('{')
+        brace_str = roll_str[brace_index+1:end_brace_index]
         brace_list = brace_str.split(',')
-        repeated_list = [chat_roll_single(brace_list(0))
-                       for roll in range(int(brace_list(1)))]
-        roll_str.replace(roll_str[brace_index,next_brace_index],
-                         ', '.join(repeated_list))
+        repeated_list = [brace_list[0]
+                         for roll in range(int(brace_list[1]))]
+        roll_str = roll_str.replace(
+            roll_str[brace_index:end_brace_index+1],
+            ', '.join(repeated_list))
     chat_list = roll_str.split(',')
     rolls = [chat_roll_single(roll_str, verbose, formatted)
              for roll_str in chat_list]
@@ -103,7 +104,7 @@ def chat_roll_single(roll_str='', verbose=False, formatted=False):
     """
     return_msg = ''
     mod_msg = ''
-    roll_str = roll_str.lower()
+    roll_str = roll_str.lower().strip()
     roll_list = re.split(r'([\s\+\-\*\/\(\)])', roll_str)
     roll_list = list(filter(None, roll_list))
     if roll_list == []: roll_list = ['d']
