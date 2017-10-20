@@ -81,7 +81,7 @@ def chat_roll(roll_str, verbose=False, formatted=False):
     hashtag_index = roll_str.find('#')
     comment = ""
     if not hashtag_index == -1:
-        roll_str, comment = tuple(roll_str.split('#'))
+        roll_str, comment = tuple(roll_str.split('#', 1))
     # parse for macros
     macros = {
              'stats' : '{4d6L!1, 6}',
