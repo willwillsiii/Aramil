@@ -95,7 +95,7 @@ def chat_roll(roll_str, verbose=False, formatted=False):
         roll_str = roll_str.lower().replace(key,value)
     # parse for repeated rolls
     while '{' in roll_str:
-        end_brace_index = roll_str.find('}')
+        end_brace_index = roll_str.rfind('}')
         if end_brace_index == -1:
             raise ValueError('Unmatched brace.')
         brace_index = roll_str.index('{')
@@ -107,10 +107,17 @@ def chat_roll(roll_str, verbose=False, formatted=False):
             roll_str[brace_index:end_brace_index+1],
             ', '.join(repeated_list))
     # parse input by commas, call chat_roll_single on each token
-    chat_list = roll_str.split(',')
-    rolls = [chat_roll_single(roll_str, verbose, formatted)
-             for roll_str in chat_list]
-    return comment.strip() + "\n" + "\n".join(rolls)
+    chat_list = roll_str.split(';')
+    #rolls = [chat_roll_single(roll_str, verbose, formatted)
+     #        for roll_str in chat_list]
+    rolls = []
+    for roll in chat_list:
+        roll_str, indv_comment = tuple(roll.split('||', 1))
+        rolls.append(chat_roll_single(roll_str, verbose, formatted)
+                    + indv_comment)
+
+    return (comment.strip() + "\n" +
+            "\n".join(rolls)) if comment else "\n".join(rolls)
 
 def chat_roll_single(roll_str='', verbose=False, formatted=False):
     """Interpet and compute rolls from a string.
