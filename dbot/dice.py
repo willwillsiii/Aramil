@@ -116,7 +116,7 @@ def chat_roll(roll_str, verbose=False, formatted=False):
             roll_str, indv_comment = tuple(roll.split('||', 1))
             rolls.append(''.join[
                 chat_roll_single(roll_str, verbose, formatted),
-                ': ', indv_comment)
+                ': ', indv_comment])
         else:
             rolls.append(chat_Roll_single(roll, verbose, formatted))
     return (comment.strip() + "\n" +
