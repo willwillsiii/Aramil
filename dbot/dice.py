@@ -118,7 +118,7 @@ def chat_roll(roll_str, verbose=False, formatted=False):
                 chat_roll_single(roll_str, verbose, formatted),
                 ': ', indv_comment])
         else:
-            rolls.append(chat_Roll_single(roll, verbose, formatted))
+            rolls.append(chat_roll_single(roll, verbose, formatted))
     return (comment.strip() + "\n" +
             "\n".join(rolls)) if comment else "\n".join(rolls)
 
