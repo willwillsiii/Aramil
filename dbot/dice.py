@@ -92,7 +92,8 @@ def chat_roll(roll_str, verbose=False, formatted=False):
              'dis' : '2d20L1'
              }
     for key, value in macros.items():
-        roll_str = roll_str.lower().replace(key,value)
+        re_data = re.compile(re.escape('key'), re.IGNORECASE)
+        roll_str = re_data.sub(value, roll_str)
     # parse for repeated rolls
     while '{' in roll_str:
         end_brace_index = roll_str.rfind('}')
