@@ -112,10 +112,13 @@ def chat_roll(roll_str, verbose=False, formatted=False):
      #        for roll_str in chat_list]
     rolls = []
     for roll in chat_list:
-        roll_str, indv_comment = tuple(roll.split('||', 1))
-        rolls.append(chat_roll_single(roll_str, verbose, formatted)
-                    + indv_comment)
-
+        if '||' in roll:
+            roll_str, indv_comment = tuple(roll.split('||', 1))
+            rolls.append(''.join[
+                chat_roll_single(roll_str, verbose, formatted),
+                ': ', indv_comment)
+        else:
+            rolls.append(chat_Roll_single(roll, verbose, formatted))
     return (comment.strip() + "\n" +
             "\n".join(rolls)) if comment else "\n".join(rolls)
 
