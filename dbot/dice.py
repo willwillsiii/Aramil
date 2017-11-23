@@ -84,7 +84,7 @@ def chat_roll(roll_str, verbose=False, formatted=False):
         roll_str, comment = tuple(roll_str.split('#', 1))
     # parse for macros
     macros = {
-             'stats' : '{4d6L!1; 6}',
+             'stats' : '{4d6L!1, 6}',
              'stat' : '4d6L!', 
              'advantage' : '2d20h1',
              'adv' : '2d20h1',
