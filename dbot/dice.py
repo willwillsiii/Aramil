@@ -106,7 +106,7 @@ def chat_roll(roll_str, verbose=False, formatted=False):
                          for roll in range(int(brace_list[1]))]
         roll_str = roll_str.replace(
             roll_str[brace_index:end_brace_index+1],
-            ', '.join(repeated_list))
+            '; '.join(repeated_list))
     # parse input by commas, call chat_roll_single on each token
     chat_list = roll_str.split(';')
     #rolls = [chat_roll_single(roll_str, verbose, formatted)
