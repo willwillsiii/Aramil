@@ -87,9 +87,9 @@ def chat_roll(roll_str, verbose=False, formatted=False):
              'stats' : '{4d6L!1, 6}',
              'stat' : '4d6L!', 
              'disadvantage' : '2d20L1',
-             'dis' : '2d20L1'
+             'dis' : '2d20L1',
              'advantage' : '2d20h1',
-             'adv' : '2d20h1',
+             'adv' : '2d20h1'
              }
     for key, value in macros.items():
         re_data = re.compile(re.escape(key), re.IGNORECASE)
