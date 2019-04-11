@@ -85,7 +85,7 @@ async def on_message(message):
             roll_msg = "Sorry, I didn't understand you."
             raise
         finally:
-            await client.send_message(message.channel, roll_msg)
+            await message.channel.send(roll_msg)
 
 # Begin Execution
 #-----------------
