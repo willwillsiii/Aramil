@@ -87,7 +87,7 @@ async def on_message(message):
         finally:
             # prepend mention
             roll_msg = ''.join([message.author.mention, ":\n", roll_msg])
-            await client.send_message(message.channel, roll_msg)
+            await message.channel.send(roll_msg)
 
 # Begin Execution
 #-----------------
