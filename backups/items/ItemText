@@ -1,0 +1,138 @@
+#Name	weight	cost	description
+Abacus	2	2 gp	
+Acid(vial)	1	25 gp
+Alchemist's fire(flask)	1	50 gp
+Arrows(twenty)	1	1gp	Ammunition
+blowgun needles (twenty)	1	1 gp	Ammunition
+Crossbow bolts (twenty)	1.5	1 gp	Ammunition
+Sling bullets (twenty)	1.5	4 cp	Ammunition
+Antitoxin (vial)	---	50 gp
+Crystal	1	10 gp	Arcane Focus
+Orb	3	20 gp	Arcane Focus
+Rod	2	20 gp	Arcane Focus
+Staff	4	5 gp	Arcane Focus
+Wand	1	10 gp	Arcane Focus
+Backpack	5	2 gp
+Ball bearings (bag of one thousand)	2	1 gp
+Barrel	70	2 gp
+Basket	2	4 sp
+Bedroll	7	1 gp
+Bell	---	1 gp
+Blanket	3	5 sp
+Block and Tackle	5 	1 gp
+Book	5	25 gp
+Bottle, glass	2 	2 gp
+Bucket	2	5 cp
+Caltrops (bag of twenty)	2	1 gp
+Candle	---	1 cp
+Case, crossbow bolt	1	1 gp
+Case, map or scroll	1 	1 gp
+Chain (ten feet)	10	5 gp
+Chalk (one piece)	---	1 cp
+Chest	25	5 gp
+Climber's kit	12	25 gp
+Clothes, common	3	5 sp
+Clothes, costume	4	5 gp
+Clothes, fine	6	15 gp
+Clothes, traveler's	4	2 gp
+Component pouch	2	25 gp
+Crowbar	5	2 gp
+Sprig of mistletoe	---	1 gp	Druidic focus
+Totem	---	1 gp	Druidic focus
+Wooden staff	4	5 gp	Druidic focus
+Yew wand	1	10 gp	Druidic focus
+Fishing tackle	4	1 gp
+Flask or tankard	1	2 cp
+Grappling hook	4	2 gp
+Hammer	3	1 gp
+Hammer, sledge	10	2 gp
+Healer's kit	3	5 gp
+Amulet	1	5 gp	Holy Symbol
+Emblem	---	5 gp	Holy Symbol
+Reliquary	2	5 gp	Holy Symbol
+Holy Water (flask)	1	25 gp
+Hourglass	1	25 gp
+Hunting Trap	25	5 gp
+Ink (one ounce bottle)	---	10 gp
+Ink Pen	---	2 cp
+Jug or Pitcher	4	2 cp
+Ladder (ten-foot)	25	1 sp
+Lamp	1	5 sp
+Lantern, bullseye	2	10 gp
+Lantern, hooded	2	5 gp
+Lock	1	10 gp
+Magnifying glass	---	100 gp
+Manacles	6	2 gp
+Mess kit	1	2 sp
+Mirror, steel	0.5	5 gp
+Oil (flask)	1	1 sp
+Paper (one sheet)	---	2 sp
+Parchment (one sheet)	---	1 sp
+Perfume (vial)	---	5 gp
+Pick, miner's	10	2 gp
+Piton	0.25	5 cp
+Poison, basic (vial)	---	100 gp
+Pole (ten-foot)	7	5 cp
+Pot, iron	10 	2 gp
+Potion of Healing	0.5	50 gp
+Pouch	1	5 sp
+Quiver	1	1 gp
+Ram, portable	35	4 gp
+Rations (one day)	2	5 sp
+Robes	4	1 gp
+Rope, hempen (fifty feet)	10	1 gp
+Rope, silk (fifty feet)	5	10 gp
+Sack	0.5	1 cp
+Scale, merchant's	3	5 gp
+Sealing wax	---	5 sp
+Shovel	5	2 gp
+Signal whistle	---	5 cp
+Signet ring	---	5 gp
+Soap	---	2 cp
+Spellbook	3	50 gp
+Spikes, iron (ten)	5	1 gp
+Spyglass	1	1,000 gp
+Tent, two-person	20	2 gp
+Tinderbox	1	5 sp
+Torch	1	1 cp
+Vial	---	1 gp
+#Waterskin 5 lbs when full
+Waterskin	---	2 sp
+Whetstone	1	1 c
+Alchemist's supplies	8	50 gp	Artisan's tools
+Brewer's Supplies	9	20 gp	Artisan's tools
+Calligrapher's Tool	5	10 gp	Artisan's tools
+Carpenter's Tools	6	8 gp	Artisan's tools
+Cartographer's Tools	6	15 gp	Artisan's tools
+Cobbler's tools	5	5 gp	Artisan's tools
+Cook's utensils	8	1 gp	Artisan's tools
+Glassblower's tools	5	30 gp	Artisan's tools
+Jeweler's tools	2	25 gp	Artisan's tools
+Leatherworker's tools	5	5 gp	Artisan's tool
+Mason's tools	8	10 gp	Artisan's tools
+Painter's tools	5	10 gp	Artisan's tools
+Potter's tool's	3	10 gp	Artisan's tools
+Smith's tools	8	 20 gp	Artisan's tools
+Tinker's tools	10	50 gp	Artisan's tools
+Weaver's tools	5	1 gp	Artisan's tools
+Woodcarver's tool	5	1 gp	Artisan's tools
+Disguise kit	3	25 gp
+Forgery kit	5	15 gp
+Dice set	---	1 sp	Gaming set
+Dragonchess set	0.5	1 gp	Gaming set
+Playing card set	---	5 sp	Gaming set
+Three-Dragon Ante set	---	1 gp	Gaming set
+Herbalism kit	3	5 gp
+Bagpipes	6	30 gp	Musical Instruments
+Drum	3	6 gp	Musical Instruments
+Dulcimer	10	25 gp	Musical Instruments
+Flute	1	2 gp	Musical Instruments
+Lute	2	35 gp	Musical Instruments
+Lyre	2	30 gp	Musical Instruments
+Horn	2	3 gp	Musical Instruments
+Pan flute	2	12 gp	Musical Instruments
+Shawm	1	2 gp	Musical Instruments
+Viol	1	30 gp	Musical Instruments
+Navigators' tools	2	25 gp
+Poisoner's kit	2	50 gp
+Thieves' tools	1	25 gp

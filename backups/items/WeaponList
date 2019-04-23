@@ -1,0 +1,38 @@
+# Name	wieght	class	cost	damage	properties
+Club	2	Simple Melee Weapons	1 sp	1d4 bludgeoning	Light
+Dagger	1	Simple Melee Weapons	2 gp	1d4 piercing	Finesse/, light, thrown (range 20/60)
+Greatclub	10	Simple Melee Weapons	2 sp	1d8 bludgeoning	Two-handed
+Handaxe	2	Simple Melee Weapons	5 gp	1d6 slashing	Light, thrown(range 20/60)
+Javelin	2	Simple Melee Weapons	5 sp	1d6 piercing	Thrown (range30/120)
+Light Hammer	2	Simple Melee Weapons	2 gp	1d4 bludgeoning	Light, thrown (range 20/60)
+Mace	4	Simple Melee Weapons	5 gp	1d6 bludgeoning	---
+Quarterstaff	4	Simple Melee Weapons	2 sp	1d6 bludgeoning	Versatile (1d8)
+Sickle	2	Simple Melee Weapons	1 gp	1d4 slashing	Light
+Spear	3	Simple Melee Weapons	1 gp	1d6 piercing	Thrown (range 20/60) versatile(1d8)
+Unarmed Strike	0	Simple Melee Weapons	---	---	---
+Crossbow, light	5	Simple Ranged Weapons	25 gp	1d8 piercing	Ammunition (range 80/320) loading, two handed
+Dart	0.25	Simple Ranged Weapons	5 cp	1d4 piercing	Finess, thrown (range 20/60)
+Shortbow	2	Simple Ranged Weapons	25 gp	1d6 piercing	Ammunition (range 80/320), two-handed
+Sling	~1	Simple Ranged Weapons	1 sp	1d4 bludgeoning	Ammunition (range 30/120)
+Battleaxe	4	Martial Melee Weapons	10 gp	1d8 slashing	Versatile(1d10)
+Flail	2	Martial Melee Weapons	10 gp	1d8 bludgeoning	---
+Glaive	6	Martial Melee Weapons	20 gp	1d10 slashing	Heavy, reach, two-handed
+Greatsword	6	Martial Melee Weapons	50 gp	2d6 slashing	Heavy, Two-handed
+Halberd	6	Martial Melee Weapons	20 gp	1d10 slashing	Heavy, reach, two-handed
+Lance	6	Martial Melee Weapons	10 gp	1d12 piercing	Reach, special
+Longsword	3	Martial Melee Weapons	15 gp	1d8 slashing	Versatile (1d10)
+Maul	10	Martial Melee Weapons	10 gp	2d6 bludgeoning	Heavy, Two-handed
+Morningstar	4	Martial Melee Weapons	1d8 bludgeoning	---
+Pike	18	Martial Melee Weapons	5 gp	1d10 piercing	Heavy, reach, two-handed
+Rapier	2	Martial Melee Weapons	25 gp	1d8 piercing	Finesse
+Scimitar	3	Martial Melee Weapons	25 gp	1d8 piercing	Finesse, light
+Shortsword	2	Martial Melee Weapons	10 gp	1d6 piercing	Finesse, light
+Trident	4	Martial Melee Weapons	5 gp	1d6 piercing	Thrown (range 20/60), versatile (1d8)
+War Pick	2	Martial Melee Weapons	5 gp	1d8 piercing	---
+Warhammer	2	Martial Melee Weapons	15 gp	1d8 bludgeoning	Versatile
+Whip	3	Martial Melee Weapons	2 gp	1d4 slashing	Finesse, reach
+Blowgun	1	Martial Ranged Weapons	10 gp	1 piercing	Ammunition (range 25/100), loading
+Crossbow, hand	3	Martial Ranged Weapons	75 gp	1d6 piercing	Ammunition (range 30/120), light, loading
+Crossbow, heavy	18	Martial Ranged Weapons	50 gp	1d10 piercing	Ammunition (range 100/400),heavy, loading, two-handed
+Longbow	2	Martial Ranged Weapons	50 gp	1d8 piercing	Ammunition (range 150/600), heavy, two-handed
+Net	3	Martial Ranged Weapons	1 gp	---	Special, thrown (range 5/15)

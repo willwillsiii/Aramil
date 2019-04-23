@@ -1,0 +1,16 @@
+Instructions
+============
+- If you don't have a socket file, run knit.sh (i.e. `./knit.sh`)
+
+- Session should be open, attach using `tmux -S $SOCKNAME attach`
+     replace $SOCKETNAME with socket name, i.e. goatSock^
+
+- If a session isn't open (connection refused) make a new one:
+                   `tmux -S $SOCKNAME`
+
+- Use the -2 option to enable 256-color terminal
+           (Use if your terminal colors are look weird in tmux)
+           `tmux -2 -S $SOCKETNAME` etc.
+
+- You can use `tmux -S $SOCKETNAME ls` to list open sessions
+

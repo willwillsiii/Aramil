@@ -1,0 +1,26 @@
+Classes
+=======
+Creatures,Items				Inventory
+           |                               |
+     Weapons,Consumables                dictionary of Items()
+                                          |
+					key: item name
+					value: item object
+							|
+						item.Name
+						item.Weight
+						item.Description
+						
+itemTableFile -> KennyScript -> shit load of class files for each item
+i.e. inside coreItems is entry Longsword -> your script takes the table
+	entry and outputs a class file for the longsword that inherits
+	the weapon class (which inherits the item class)
+
+There will probably be a template set up that will contain the usual
+getters/setters for the subclass (weapon in this case) and your script
+will read in the values to put into that template from Henry's script
+
+For now work on making a script that takes in values from Henry's table
+and stores each line into a dictionary. You can use the name as the key,
+but for the value use a list that contains the entire line of the table
+in the same order of Henry's columns.
