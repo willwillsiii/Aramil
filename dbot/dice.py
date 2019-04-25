@@ -184,6 +184,8 @@ def chat_roll_single(roll_str='', verbose=False, formatted=False):
                             verbose_str += "]**"
                         else:
                             verbose_str += "**]**"
+                    else:
+                        verbose_str = verbose_str.replace(',','**,**')
                     if roll.num_dice == '1' or roll.keep_str[1:] == '1':
                         return_msg += verbose_str
                     else:
