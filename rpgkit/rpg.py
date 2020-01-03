@@ -26,7 +26,7 @@ def set_ability_score_from_dict(ent, scores):
     init(ent, scores, calc_mods(scores))
 
 def set_ability_scores(ent, strength=None, dexterity=None, constitution=None,
-                       intelligence=None, wisdom=None, charisma=None, default=False):
+        intelligence=None, wisdom=None, charisma=None, default=False):
     scores_tmp = {
         'str': strength,
         'dex': dexterity,
@@ -42,12 +42,20 @@ def set_ability_scores(ent, strength=None, dexterity=None, constitution=None,
                 scores[ability] = 10
         else:
             scores[ability] = score
-    init(ent, scores, calc_mods(scores))
+    set_ability_score_from_dict(ent, scores)
+
 
 DEFAULT_HP = 0
+DEFAULT_HP_TMP = 0
+
+def update_hp_total(ent):
+    hp = getattr(ent, 'hp', DEFAULT_HP)
+    hp_tmp = getattr(ent, 'hp_tmp', DEFAULT_HP_TMP)
+    init(ent, hp_total=hp+hp_tmp)
 
 def set_hp(ent, current_hp):
     init(ent, hp=current_hp)
+    update_hp_total(ent)
 
 def add_hp(ent, hp):
     hp += getattr(ent, 'hp', DEFAULT_HP)
@@ -65,6 +73,7 @@ def set_hp_max(ent, max_hitpoints, current_hp=None, start_full=True):
             set_hp(ent, max_hitpoints)
     else:
         set_hp(ent, current_hp)
+    update_hp_total(ent)
 
 def add_hp_max(ent, hp_max):
     hp_max += getattr(ent, 'hp_max', DEFAULT_HP)
@@ -72,12 +81,13 @@ def add_hp_max(ent, hp_max):
 
 def set_hp_tmp(ent, hp):
     init(ent, hp_tmp=hp)
+    update_hp_total(ent)
 
 def reset_hp_tmp(ent):
-    init(ent, hp_tmp=0)
+    set_hp_tmp(ent, 0)
 
 def add_hp_tmp(ent, hp):
-    hp += getattr(ent, 'hp_tmp', DEFAULT_HP)
+    hp += getattr(ent, 'hp_tmp', DEFAULT_HP_TMP)
     set_hp_tmp(ent, hp)
 
 def reset_all_hp(ent):
@@ -92,5 +102,10 @@ def heal(ent, heal_hp):
     add_hp(ent, heal_hp)
 
 def damage(ent, dealt):
+    hp_tmp = getattr(ent, 'hp_tmp', DEFAULT_HP_TMP)
+    hp_tmp_damage = min(dealt, hp_tmp)
+    add_hp_tmp(ent, -hp_tmp_damage)
+    dealt -= hp_tmp_damage
     hp_current = getattr(ent, 'hp', DEFAULT_HP)
-    set_hp(ent, max(hp_current - dealt, 0))
+    hp_damage = min(dealt, hp_current)
+    add_hp(ent, -hp_damage)
