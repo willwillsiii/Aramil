@@ -30,8 +30,15 @@ async def on_ready():
 
 # Chat Commands
 #---------------
+channel_id_dict = {
+        'goodbarrelinn': 258048760930762755,
+        'alchemyroom': 285097089535311872
+    }
+channel = client.get_channel(channel_id_dict['goodbarrelinn'])
 @client.event
 async def on_message(message):
+    global channel
+
     if message.content.startswith('!roll'):
         async with message.channel.typing():
             try:
@@ -87,6 +94,24 @@ async def on_message(message):
                 # prepend mention
                 roll_msg = ''.join([message.author.mention, "\n", roll_msg])
         await message.channel.send(roll_msg)
+
+    if message.author.id == 191661210452754432:
+        if message.content.startswith('!say'):
+            async with message.channel.typing():
+                say_msg = message.content[5:]
+            await channel.send(say_msg)
+        if message.content.startswith('!channel'):
+            async with message.channel.typing():
+                channel_name = message.content.split(maxsplit=1)[1]
+                try:
+                    channel = client.get_channel(channel_id_dict[channel_name])
+                    await message.channel.send(
+                        "Channel changed to " + channel_name + "."
+                        )
+                except KeyError:
+                    await message.channel.send(
+                        "I don't recognize that channel."
+                        )
 
 # Begin Execution
 #-----------------
