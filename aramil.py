@@ -6,6 +6,7 @@ import random
 # homebrew package imports
 from dbot.dice import chat_roll
 
+
 # Logging Setup
 #---------------
 logger = logging.getLogger('discord')
