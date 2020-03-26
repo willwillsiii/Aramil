@@ -3,7 +3,6 @@ import random
 import collections
 import re
 
-@singledispatch
 def roll_dice(max_val=20, num_dice=1):
     """Returns a list of random dice rolls.
 
@@ -29,13 +28,6 @@ def roll_dice(max_val=20, num_dice=1):
                          ' dice is too many. Only roll',
                          ' up to 100 dice at once.']))
     return [random.randint(1, max_val) for die in range(num_dice)]
-
-
-@roll_dice.register(str)
-def _(roll_str):
-    roll = mod_roll(roll_str)
-    return roll_dice(int(roll.max_val),int(roll.num_dice))
-
 
 def mod_roll(roll_str):
     """Modify a roll to normalize and expand abbreviations"""
@@ -75,53 +67,28 @@ def mod_roll(roll_str):
                                            'max_val', 'keep_str'])
     return Roll(mod_roll_str, num_dice, max_val, keep_str)
 
-def chat_roll(roll_str, verbose=False, formatted=False):
-    """General purpose wrapper function for chat_roll_single."""
-    # parse comment
-    hashtag_index = roll_str.find('#')
-    comment = ""
-    if not hashtag_index == -1:
-        roll_str, comment = tuple(roll_str.split('#', 1))
-    # parse for macros
-    macros = {
-             'stats' : '{4d6L!1, 6}',
-             'stat' : '4d6L!', 
-             'disadvantage' : '2d20L1',
-             'dis' : '2d20L1',
-             'advantage' : '2d20h1',
-             'adv' : '2d20h1'
-             }
-    for key, value in macros.items():
-        re_data = re.compile(re.escape(key), re.IGNORECASE)
-        roll_str = re_data.sub(value, roll_str)
-    # parse for repeated rolls
-    while '{' in roll_str:
-        end_brace_index = roll_str.rfind('}')
-        if end_brace_index == -1:
-            raise ValueError('Unmatched brace.')
-        brace_index = roll_str.index('{')
-        brace_str = roll_str[brace_index+1:end_brace_index]
-        brace_list = brace_str.split(',')
-        repeated_list = [brace_list[0]
-                         for roll in range(int(brace_list[1]))]
-        roll_str = roll_str.replace(
-            roll_str[brace_index:end_brace_index+1],
-            '; '.join(repeated_list))
-    # parse input by commas, call chat_roll_single on each token
-    chat_list = roll_str.split(';')
-    #rolls = [chat_roll_single(roll_str, verbose, formatted)
-     #        for roll_str in chat_list]
-    rolls = []
-    for roll in chat_list:
-        if '||' in roll:
-            roll_str, indv_comment = tuple(roll.split('||', 1))
-            indv_comment = indv_comment.strip()
-            rolls.append(''.join([indv_comment, ': ',
-                chat_roll_single(roll_str, verbose, formatted)]))
-        else:
-            rolls.append(chat_roll_single(roll, verbose, formatted))
-    return (comment.strip() + "\n" +
-            "\n".join(rolls)) if comment else "\n".join(rolls)
+def sort_and_trim(vals, keep):
+    """Returns a sorted subset of values and the indices of the subset.
+
+    Arguments:
+    vals -- values to sort
+    keep -- which values to keep
+    """
+    keep = keep.lower()
+    trim_ndcs = sorted(range(len(vals)), key=vals.__getitem__)
+    num_keep = int(keep[1:].replace('!', '-'))
+    if num_keep < 0:
+        if keep.startswith('h'):
+            keep = keep.replace('h', 'l')
+        elif keep.startswith('l'):
+            keep = keep.replace('l', 'h')
+        num_keep = len(vals) + num_keep
+    if keep.startswith('h'):
+        trim_ndcs = trim_ndcs[-num_keep:]
+    elif keep.startswith('l'):
+        trim_ndcs = trim_ndcs[:num_keep]
+    vals = [vals[i] for i in trim_ndcs]
+    return vals, trim_ndcs
 
 def chat_roll_single(roll_str='', verbose=False, formatted=False):
     """Interpet and compute rolls from a string.
@@ -207,28 +174,59 @@ def chat_roll_single(roll_str='', verbose=False, formatted=False):
         return_msg += str(eval(''.join(roll_list)))
     return return_msg
 
+def chat_roll(roll_str='', verbose=False, formatted=False):
+    """General purpose wrapper function for chat_roll_single."""
+    # parse comment
+    hashtag_index = roll_str.find('#')
+    comment = ""
+    if hashtag_index != -1:
+        roll_str, comment = tuple(roll_str.split('#', 1))
+    # parse for macros
+    macros = {
+             'stats' : '{4d6L!1, 6}',
+             'stat' : '4d6L!',
+             'disadvantage' : '2d20L1',
+             'dis' : '2d20L1',
+             'advantage' : '2d20h1',
+             'adv' : '2d20h1'
+             }
+    for key, value in macros.items():
+        re_data = re.compile(re.escape(key), re.IGNORECASE)
+        roll_str = re_data.sub(value, roll_str)
+    # parse for repeated rolls
+    while '{' in roll_str:
+        end_brace_index = roll_str.rfind('}')
+        if end_brace_index == -1:
+            raise ValueError('Unmatched brace.')
+        brace_index = roll_str.index('{')
+        brace_str = roll_str[brace_index+1:end_brace_index]
+        brace_list = brace_str.split(',')
+        repeated_list = [brace_list[0]
+                         for roll in range(int(brace_list[1]))]
+        roll_str = roll_str.replace(
+            roll_str[brace_index:end_brace_index+1],
+            '; '.join(repeated_list))
+    # parse input by commas, call chat_roll_single on each token
+    chat_list = roll_str.split(';')
+    rolls = []
+    for roll in chat_list:
+        if '|' in roll:
+            roll_str, indv_comment = tuple(roll.split('|', 1))
+            indv_comment = indv_comment.strip()
+            rolls.append(''.join([indv_comment, ': ',
+                chat_roll_single(roll_str, verbose, formatted)]))
+        else:
+            rolls.append(chat_roll_single(roll, verbose, formatted))
+    return (comment.strip() + "\n" +
+            "\n".join(rolls)) if comment else "\n".join(rolls)
 
-def sort_and_trim(vals, keep):
-    """Returns a sorted subset of values and the indices of the subset.
-    
-    Arguments:
-    vals -- values to sort
-    keep -- which values to keep
-    """
-    keep = keep.lower()
-    trim_ndcs = sorted(range(len(vals)), key=vals.__getitem__)
-    num_keep = int(keep[1:].replace('!', '-'))
-    if num_keep < 0:
-        if keep.startswith('h'):
-            keep = keep.replace('h', 'l')
-        elif keep.startswith('l'):
-            keep = keep.replace('l', 'h')
-        num_keep = len(vals) + num_keep
-    if keep.startswith('h'):
-        trim_ndcs = trim_ndcs[-num_keep:]
-    elif keep.startswith('l'):
-        trim_ndcs = trim_ndcs[:num_keep]
-    vals = [vals[i] for i in trim_ndcs]
-    return vals, trim_ndcs
-
-
+def roll(roll_str=''):
+    """Wrapper around chat_roll for command line use.
+    Returns a number for a single roll,
+    or a tuple for multiple rolls."""
+    chat_result = chat_roll(roll_str, verbose=False, formatted=False)
+    if '\n' in chat_result:
+        result = [int(res.split()[-1]) for res in chat_result.splitlines()]
+    else:
+        result = int(chat_result.split()[-1])
+    return result
