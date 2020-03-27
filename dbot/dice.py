@@ -101,7 +101,7 @@ def chat_roll_single(roll_str='', verbose=False, formatted=False):
     return_msg = ''
     mod_msg = ''
     roll_str = roll_str.lower().strip()
-    roll_list = re.split(r'([\s\+\-\*\/\(\)])', roll_str)
+    roll_list = re.split(r'([\s\+\-\*/()])', roll_str)
     roll_list = list(filter(None, roll_list))
     if roll_list == []: roll_list = ['d']
     for i in range(len(roll_list)):
@@ -174,13 +174,56 @@ def chat_roll_single(roll_str='', verbose=False, formatted=False):
         return_msg += str(eval(''.join(roll_list)))
     return return_msg
 
+def parse_repeated_rolls(roll_str):
+    roll_list = re.split('([,{}])', roll_str, 1)
+    if len(roll_list) != 1:
+        delim = roll_list.pop(1)
+        if delim == ',':
+            roll_list.extend(roll_list.pop(1).split(';', 1))
+            repeated_roll = roll_list[0]
+            num_times = int(roll_list[1])
+            parsed_str = '; '.join([repeated_roll]*num_times)
+            if len(roll_list) == 3:
+                parsed_str = ''.join([parsed_str, ';',
+                    parse_repeated_rolls(roll_list[2])])
+        elif delim == '{':
+            # counting to remove braces and recurse
+            nest = 1
+            close_index = None
+            for i in range(len(roll_list[1])):
+                char = roll_list[1][i]
+                if char == '{':
+                    nest += 1
+                if char == '}':
+                    nest -= 1
+                if nest == 0:
+                    close_index = i
+                    # append rest of string to roll_list only if exists
+                    if i != len(roll_list[1]) - 1:
+                        roll_list.append(roll_list[1][i+1:])
+                    roll_list[1] = roll_list[1][:i]
+                    break
+            if close_index == None:
+                raise ValueError("Unmatched brace(s).")
+            roll_list[1] = parse_repeated_rolls(roll_list[1])
+            if len(roll_list) == 3:
+                roll_list[1] = parse_repeated_rolls(''.join(roll_list[1:]))
+                del roll_list[2]
+            parsed_str = ''.join(roll_list)
+        else:
+            # delim == '}'
+            raise ValueError("Unmatched brace(s).")
+    else:
+        parsed_str = roll_str
+    return parsed_str
+
 def chat_roll(roll_str='', verbose=False, formatted=False):
     """General purpose wrapper function for chat_roll_single."""
     # parse comment
     hashtag_index = roll_str.find('#')
     comment = ""
     if hashtag_index != -1:
-        roll_str, comment = tuple(roll_str.split('#', 1))
+        roll_str, comment = roll_str.split('#', 1)
     # parse for macros
     macros = {
              'stats' : '{4d6L!1, 6}',
@@ -194,18 +237,7 @@ def chat_roll(roll_str='', verbose=False, formatted=False):
         re_data = re.compile(re.escape(key), re.IGNORECASE)
         roll_str = re_data.sub(value, roll_str)
     # parse for repeated rolls
-    while '{' in roll_str:
-        end_brace_index = roll_str.rfind('}')
-        if end_brace_index == -1:
-            raise ValueError('Unmatched brace.')
-        brace_index = roll_str.index('{')
-        brace_str = roll_str[brace_index+1:end_brace_index]
-        brace_list = brace_str.split(',')
-        repeated_list = [brace_list[0]
-                         for roll in range(int(brace_list[1]))]
-        roll_str = roll_str.replace(
-            roll_str[brace_index:end_brace_index+1],
-            '; '.join(repeated_list))
+    roll_str = parse_repeated_rolls(roll_str)
     # parse input by commas, call chat_roll_single on each token
     chat_list = roll_str.split(';')
     rolls = []
