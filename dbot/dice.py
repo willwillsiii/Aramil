@@ -7,26 +7,22 @@ def roll_dice(max_val=20, num_dice=1):
     """Returns a list of random dice rolls.
 
     Keyword arguments:
-    max_val -- maximum value of the dice, also the number of sides (default 20)
+    max_val -- maximum value of the dice (default 20)
     num_dice -- number of dice to roll (default 1)
     """
     # check inputs
     if max_val <= 0 or not isinstance(max_val, int):
-        raise ValueError("".join([str(max_val),
-                         '-sided die does not have a positive integer',
-                         ' number of faces.']))
+        raise ValueError(f"{max_val}-sided die does not have a positive"
+                         " integer number of faces.")
     if num_dice <= 0 or not isinstance(num_dice, int):
-        raise ValueError("".join([str(num_dice),
-                         ' dice is not a positive integer',
-                         ' number of dice.']))
+        raise ValueError(f"{num_dice} dice is not a positive integer"
+                         " number of dice.")
     if max_val > 200:
-        raise ValueError("".join([str(max_val),
-                         '-sided die is too large.',
-                         ' Maximum sides is 200.']))
+        raise ValueError(f"{max_val}-sided die is too large."
+                         " Maximum sides is 200.")
     if num_dice > 100:
-        raise ValueError("".join([str(num_dice),
-                         ' dice is too many. Only roll',
-                         ' up to 100 dice at once.']))
+        raise ValueError(f"{num_dice} dice is too many."
+                         " Only roll up to 100 dice at once.")
     return [random.randint(1, max_val) for die in range(num_dice)]
 
 def mod_roll(roll_str):
@@ -51,18 +47,10 @@ def mod_roll(roll_str):
         keep_str = keep_str + '1'
     # check for decimals
     if '.' in num_dice:
-        raise ValueError(''.join([
-            "invalid literal for int() with base 10: 'num_dice=",
-            num_dice, "'"]))
+        raise ValueError(f"invalid literal for int() with base 10: {num_dice}")
     if '.' in max_val:
-        raise ValueError(''.join([
-            "invalid literal for int() with base 10: 'max_val=",
-            max_val, "'"]))
-    if '.' in keep_str:
-        raise ValueError(''.join([
-            "invalid literal for int() with base 10: 'keep_str=",
-            keep_str, "'"]))
-    mod_roll_str = num_dice + 'd' + max_val + keep_str
+        raise ValueError(f"invalid literal for int() with base 10: {max_val}")
+    mod_roll_str = f'{num_dice}d{max_val}{keep_str}'
     Roll = collections.namedtuple('Roll', ['roll_str', 'num_dice',
                                            'max_val', 'keep_str'])
     return Roll(mod_roll_str, num_dice, max_val, keep_str)
@@ -98,16 +86,17 @@ def chat_roll_single(roll_str='', verbose=False, formatted=False):
     verbose -- whether each roll is returned (default False)
     formatted -- whether to format for Discord (default false)
     """
-    return_msg = ''
-    mod_msg = ''
-    roll_str = roll_str.lower().strip()
+    mod_msg = []
+    verbose_msg = []
+    re_single_space = re.compile(r"\s+")
+    roll_str = re_single_space.sub(" ", roll_str).lower().strip()
     roll_list = re.split(r'([\s\+\-\*/()])', roll_str)
     roll_list = list(filter(None, roll_list))
     if roll_list == []: roll_list = ['d']
     for i in range(len(roll_list)):
         if 'd' in roll_list[i]:
             roll = mod_roll(roll_list[i])
-            mod_msg += roll.roll_str
+            mod_msg.append(roll.roll_str)
             roll_res = roll_dice(int(roll.max_val), int(roll.num_dice))
             if roll.keep_str:
                 roll_res_trimmed, trim_ndcs = sort_and_trim(roll_res,
@@ -116,63 +105,48 @@ def chat_roll_single(roll_str='', verbose=False, formatted=False):
             else:
                 roll_sum = sum(roll_res)
             if verbose:
-                verbose_str = str(roll_res)
                 if formatted:
-                    verbose_str = "**" + verbose_str + "**"
                     if roll.keep_str:
-                        verbose_str = "**["
-                        first_num = True
-                        bold_on = True
-                        for n in range(len(roll_res)):
-                            if n in trim_ndcs:
-                                if bold_on:
-                                    if first_num:
-                                        verbose_str += str(roll_res[n])
-                                        first_num = False
-                                    else:
-                                        verbose_str += (
-                                            "**, **" + str(roll_res[n]))
-                                else:
-                                    verbose_str += ", **" + str(roll_res[n])
-                                    bold_on = True
-                            else:
-                                if bold_on:
-                                    if first_num:
-                                        verbose_str += "**" + str(roll_res[n])
-                                        first_num = False
-                                        bold_on = False
-                                    else:
-                                        verbose_str += (
-                                            "**, " + str(roll_res[n]))
-                                        bold_on = False
-                                else:
-                                    verbose_str += ", " + str(roll_res[n])
-                        if bold_on:
-                            verbose_str += "]**"
-                        else:
-                            verbose_str += "**]**"
+                        verbose_msg.append("**[")
+                        # Handle the first roll separate in case it also
+                        # needs to be bold. This prevents duplicate
+                        # asterisks with the opening bracket.
+                        verbose_msg.append(f"{roll_res[0]}**"
+                            if 0 in trim_ndcs else f"**{roll_res[0]}")
+                        verbose_msg.append(", ")
+                        # Iterate through the middle.
+                        verbose_msg.extend([f"**{roll_res[n]}**, " if n in
+                                            trim_ndcs else f"{roll_res[n]}, "
+                                            for n in range(1,
+                                                           len(roll_res) - 1)])
+                        # Handle the last roll separately as well.
+                        verbose_msg.append(f"**{roll_res[-1]}"
+                            if len(roll_res) - 1 in trim_ndcs
+                            else f"{roll_res[-1]}**")
+                        verbose_msg.append("]**")
                     else:
-                        verbose_str = verbose_str.replace(',','**,**')
-                    if roll.num_dice == '1' or roll.keep_str[1:] == '1':
-                        return_msg += verbose_str
-                    else:
-                        return_msg += (verbose_str
-                                       + "{" + str(roll_sum) + "}")
+                        verbose_msg.append(f"**{roll_res}**".replace(
+                            ", ", "**, **"))
+                    if not (roll.num_dice == '1' or (roll.keep_str and
+                                                     len(trim_ndcs) == 1)):
+                        verbose_msg.append(f"{{{roll_sum}}}")
                 else:
-                    return_msg += str(verbose_str) + "{" + str(roll_sum) + "}"
+                    verbose_msg.append(f"{roll_res}{{{roll_sum}}}")
             roll_list[i] = str(roll_sum)
         else:
-            mod_msg += roll_list[i]
+            safe = '\\' + roll_list[i] if (
+                formatted and roll_list[i]) in '*' else roll_list[i]
+            mod_msg.append(safe)
             if verbose:
-                return_msg += roll_list[i]
-    return_msg = mod_msg + " = " + return_msg
+                verbose_msg.append(safe)
     if verbose:
-        return_msg += " = "
-    if formatted:
-        return_msg += "**" + str(eval(''.join(roll_list))) + "**"
-    else:
-        return_msg += str(eval(''.join(roll_list)))
-    return return_msg
+        verbose_msg.extend(" = ")
+    return_msg = mod_msg.copy()
+    return_msg.append(" = ")
+    return_msg.extend(verbose_msg.copy())
+    result_str = str(eval(''.join(roll_list)))
+    return_msg.append(f"**{result_str}**" if formatted else result_str)
+    return ''.join(return_msg)
 
 def parse_repeated_rolls(roll_str):
     roll_list = re.split('([,{}])', roll_str, 1)
@@ -234,8 +208,8 @@ def chat_roll(roll_str='', verbose=False, formatted=False):
              'adv' : '2d20h1'
              }
     for key, value in macros.items():
-        re_data = re.compile(re.escape(key), re.IGNORECASE)
-        roll_str = re_data.sub(value, roll_str)
+        re_macro = re.compile(re.escape(key), re.IGNORECASE)
+        roll_str = re_macro.sub(value, roll_str)
     # parse for repeated rolls
     roll_str = parse_repeated_rolls(roll_str)
     # parse input by commas, call chat_roll_single on each token

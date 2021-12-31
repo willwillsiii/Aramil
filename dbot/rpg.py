@@ -227,26 +227,34 @@ def update_inv_wt(ent):
     update_total_wt(ent)
 
 
-def turn_gen(initiative_dict, surprisers=None,
-        starting_turn=None, starting_round=0):
+def turn_gen(initiative_dict, surprisers=None, start_at=None,
+        start_round=None, start_turn=None):
+    if start_at is not None:
+        if start_round is None:
+            start_round = start_at[0]
+        if start_turn is None:
+            start_turn = start_at[1]
+    if start_round is None:
+        start_round = 0
+    if start_round < 0:
+        raise ValueError(f'Negative "start_round" given: "{start_round}"')
     include_surprise_round = False
-    if starting_round == 0:
-        if ((not starting_turn and surprisers)
-                or starting_turn in surprisers):
+    if start_round == 0:
+        if surprisers is not None and start_turn in surprisers:
             include_surprise_round = True
             surprise_turn_order = sorted(surprisers,
                 key=initiative_dict.__getitem__, reverse=True)
             surprise_turns = ((0, turn) for turn in surprise_turn_order)
-        starting_round = 1
+        start_round = 1
     turn_order = sorted(initiative_dict,
         key=initiative_dict.__getitem__, reverse=True)
     turns = ((current_round, current_turn)
-            for current_round in itertools.count(starting_round)
+            for current_round in itertools.count(start_round)
             for current_turn in turn_order)
     if include_surprise_round:
         turns = itertools.chain(surprise_turns, turns)
-    if starting_turn:
-        if starting_turn not in initiative_dict:
+    if start_turn:
+        if start_turn not in initiative_dict:
             raise ValueError("Supplied starting turn is not valid.")
-        turns = itertools.dropwhile(lambda turn: turn[1] != starting_turn, turns)
+        turns = itertools.dropwhile(lambda turn: turn[1] != start_turn, turns)
     return turns
