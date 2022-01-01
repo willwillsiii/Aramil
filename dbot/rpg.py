@@ -240,7 +240,8 @@ def turn_gen(initiative_dict, surprisers=None, start_at=None,
         raise ValueError(f'Negative "start_round" given: "{start_round}"')
     include_surprise_round = False
     if start_round == 0:
-        if surprisers is not None and start_turn in surprisers:
+        if surprisers is not None and (
+            start_turn is None or start_turn in surprisers):
             include_surprise_round = True
             surprise_turn_order = sorted(surprisers,
                 key=initiative_dict.__getitem__, reverse=True)

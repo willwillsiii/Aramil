@@ -223,8 +223,8 @@ def chat_roll(roll_str='', verbose=False, formatted=False):
                 chat_roll_single(roll_str, verbose, formatted)]))
         else:
             rolls.append(chat_roll_single(roll, verbose, formatted))
-    return (comment.strip() + "\n" +
-            "\n".join(rolls)) if comment else "\n".join(rolls)
+    return f"{comment.strip()}\n{chr(10).join(rolls)}" if (
+        comment) else "\n".join(rolls)
 
 def roll(roll_str=''):
     """Wrapper around chat_roll for command line use.
