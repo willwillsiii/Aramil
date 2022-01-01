@@ -135,7 +135,7 @@ def chat_roll_single(roll_str='', verbose=False, formatted=False):
             roll_list[i] = str(roll_sum)
         else:
             safe = '\\' + roll_list[i] if (
-                formatted and roll_list[i]) in '*' else roll_list[i]
+                formatted and roll_list[i] in '*') else roll_list[i]
             mod_msg.append(safe)
             if verbose:
                 verbose_msg.append(safe)
