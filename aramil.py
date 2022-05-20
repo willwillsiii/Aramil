@@ -58,8 +58,8 @@ async def on_message(message):
                     # get sides, i.e. 0.5-sided returns 0.5
                     if 'invalid literal' in err_msg:
                         sides = err_msg.split("'")[1]
-                    roll_msg = ("Show me a " + sides +
-                               "-sided die and I will roll it for you.")
+                    roll_msg = ("Show me a {}-sided die"
+                                " and I will roll it for you.".format(sides))
                 # num_dice is not a positive int
                 elif 'positive integer number of dice' in err_msg or (
                         'invalid literal num_dice') in err_msg:
@@ -68,22 +68,22 @@ async def on_message(message):
                     if 'invalid literal' in err_msg:
                                num_dice = err_msg.split("'")[1]
                     if '-' in num_dice:
-                        roll_msg = ("Can you roll a negative number of dice?" +
+                        roll_msg = ("Can you roll a negative number of dice?"
                                    " Really, you must teach me.")
                     else:
-                        roll_msg = ("Sorry, I am no wizard; " + 
-                                   "therefore, I cannot roll " + num_dice +
-                                   " dice.")
+                        roll_msg = ("Sorry, I am no wizard;"
+                                   " therefore, I cannot roll"
+                                   " {} dice.".format(num_dice))
                 elif 'Maximum sides is 200' in err_msg:
                     sides = err_msg.split('-', 1)[0]
-                    roll_msg = ("I don't have a " + sides + "-sided die. "
-                               "My collection only has a maximum of " +
-                               "200-sided dice.")
+                    roll_msg = ("I don't have a {}-sided die."
+                               " My collection only has a maximum of"
+                               " 200-sided dice.".format(sides))
                 elif '100 dice at once' in err_msg:
                     num_dice = err_msg.split(' ', 1)[0]
-                    roll_msg = ("Using " + num_dice + " dice is illogical. "
-                               "If you think you can roll more than 100 at " +
-                               "once, do it yourself.")
+                    roll_msg = ("Using {} dice is illogical."
+                        " If you think you can roll more than 100 at once,"
+                        " do it yourself.".format(num_dice))
                 else:
                     roll_msg = "Sorry, I didn't understand you."
                     raise val_err
@@ -107,12 +107,10 @@ async def on_message(message):
                 try:
                     channel = client.get_channel(channel_id_dict[channel_name])
                     await message.channel.send(
-                        "Channel changed to " + channel_name + "."
-                        )
+                            "Channel changed to {}.".format(channel_name))
                 except KeyError:
                     await message.channel.send(
-                        "I don't recognize that channel."
-                        )
+                        "I don't recognize that channel.")
 
 # Begin Execution
 #-----------------

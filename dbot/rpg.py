@@ -226,9 +226,30 @@ def update_inv_wt(ent):
     init(ent, inv_wt=weight)
     update_total_wt(ent)
 
-
-def turn_gen(initiative_dict, surprisers=None, start_at=None,
+def turn_gen(init_dict, surprisers=None, start_at=None,
         start_round=None, start_turn=None):
+    """Create a generator for D&D turns given initiatives.
+
+    Positional argument:
+    init_dict -- dictionary with characters as keys
+    and initiatives as values
+
+    Keyword arguments:
+    surprisers -- list of characters in the extra surprise round
+    (default None)
+    start_at -- a list in which the first element has the same effect
+    as start_round and the second element as start_turn
+    (default None, no effect)
+    start_round -- current round of the combat at start (default 0)
+    start_turn -- current character turn of the combat at start
+    (default None)
+
+    Returns a generator where each value produced is a tuple,
+    with the elements given as follows:
+    first element -- current round of combat, where round 0 refers to
+    surprise round and round 1 refers to the first round of normal combat
+    second element -- current character turn
+    """
     if start_at is not None:
         if start_round is None:
             start_round = start_at[0]
@@ -239,23 +260,33 @@ def turn_gen(initiative_dict, surprisers=None, start_at=None,
     if start_round < 0:
         raise ValueError(f'Negative "start_round" given: "{start_round}"')
     include_surprise_round = False
-    if start_round == 0:
+    # check if the starting round is the surprise round
+    if start_round == 0: 
+        # check if the starting turn is in the surprise round
+        # otherwise the surprise round is not needed
         if surprisers is not None and (
             start_turn is None or start_turn in surprisers):
             include_surprise_round = True
+            # sort the surprisers by their initiatives
             surprise_turn_order = sorted(surprisers,
-                key=initiative_dict.__getitem__, reverse=True)
+                key=init_dict.__getitem__, reverse=True)
+            # create the generator for the surprise round
             surprise_turns = ((0, turn) for turn in surprise_turn_order)
+        # surprise round is handled, so now move on
         start_round = 1
-    turn_order = sorted(initiative_dict,
-        key=initiative_dict.__getitem__, reverse=True)
+    # sort the characters by their initiatives
+    turn_order = sorted(init_dict,
+        key=init_dict.__getitem__, reverse=True)
+    # create the generator for future rounds
     turns = ((current_round, current_turn)
             for current_round in itertools.count(start_round)
             for current_turn in turn_order)
+    # add the surprise round if needed
     if include_surprise_round:
         turns = itertools.chain(surprise_turns, turns)
+    # move forward to the starting turn
     if start_turn:
-        if start_turn not in initiative_dict:
-            raise ValueError("Supplied starting turn is not valid.")
+        if start_turn not in init_dict:
+            raise ValueError("Supplied starting turn has no corresponding initiative.")
         turns = itertools.dropwhile(lambda turn: turn[1] != start_turn, turns)
     return turns

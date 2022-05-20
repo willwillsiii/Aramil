@@ -80,7 +80,7 @@ def sort_and_trim(vals, keep):
 
 def chat_roll_single(roll_str='', verbose=False, formatted=False):
     """Interpet and compute rolls from a string.
-    
+
     Keyword arguments:
     roll_str -- what to interpret as a roll (default '')
     verbose -- whether each roll is returned (default False)
@@ -149,6 +149,8 @@ def chat_roll_single(roll_str='', verbose=False, formatted=False):
     return ''.join(return_msg)
 
 def parse_repeated_rolls(roll_str):
+    """Expand rolls in the form of <roll>, <num_times> recursively
+    using braces to separate the repeated rolls."""
     roll_list = re.split('([,{}])', roll_str, 1)
     if len(roll_list) != 1:
         delim = roll_list.pop(1)
