@@ -20,7 +20,10 @@ logger.addHandler(handler)
 
 # Client Initialization
 #-----------------------
-client = discord.Client()
+intents = discord.Intents.default()
+intents.message_content = True
+
+client = discord.Client(intents=intents)
 
 @client.event
 async def on_ready():
@@ -35,7 +38,7 @@ channel_id_dict = {
         'goodbarrelinn': 258048760930762755,
         'alchemyroom': 285097089535311872
     }
-channel = client.get_channel(channel_id_dict['goodbarrelinn'])
+channel = client.get_channel(channel_id_dict['alchemyroom'])
 @client.event
 async def on_message(message):
     global channel
