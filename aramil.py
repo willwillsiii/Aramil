@@ -37,7 +37,7 @@ channel_id_dict = {
         'goodbarrelinn': 258048760930762755,
         'alchemyroom': 285097089535311872
     }
-channel = client.get_channel(channel_id_dict['goodbarrelinn'])
+channel = client.get_channel(channel_id_dict['alchemyroom'])
 @client.event
 async def on_message(message):
     global channel
